@@ -1,29 +1,35 @@
 import csv from 'csvtojson';
 import fs from 'fs';
-import { pipeline } from 'stream';
 
 const csvFilePath = './csv/nodejs-hw1-ex1.csv';
 const fileToWrite = './csv/file.txt';
 
 const readStream = fs.createReadStream(csvFilePath);
-const writeSyream = fs.createWriteStream(fileToWrite);
+const writeStream = fs.createWriteStream(fileToWrite);
 
 readStream.on("error", (err) => {
     console.log('file read error');
 });
-writeSyream.on("error", (err) => {
+writeStream.on("error", (err) => {
     console.log('file write error');
 });
 
-pipeline(
-    readStream,
-    csv(),
-    writeSyream,
-    (err) => {
-        if (err) {
-            console.error('Pipeline failed.', err);
-        } else {
-            console.log('Pipeline succeeded.');
+csv({ checkType: true })
+    .fromStream(readStream)
+    .subscribe(
+        (json) => {
+            const map = new Map();
+            for (const [key, value] of Object.entries(json)) {
+                map.set(key.toLowerCase(), value);
+            }
+            writeStream.write(`${JSON.stringify(Object.fromEntries(map))}\n`);
+        },
+        (err) => {
+            if (err) {
+                console.error('Pipeline failed.', err);
+            } else {
+                console.log('Pipeline succeeded.');
+            }
         }
-    }
-);
+    );
+
