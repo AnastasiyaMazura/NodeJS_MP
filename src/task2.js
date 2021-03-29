@@ -18,6 +18,7 @@ csv({ checkType: true })
     .fromStream(readStream)
     .subscribe(
         (json) => {
+            delete json['Amount'];
             const map = new Map();
             for (const [key, value] of Object.entries(json)) {
                 map.set(key.toLowerCase(), value);
