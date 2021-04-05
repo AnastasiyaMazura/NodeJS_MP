@@ -1,11 +1,11 @@
 let users = [];
 
 export function getUsers() {
-  return users;
+    return users;
 }
 
 export function setUsers(newUsers) {
-  users = [...newUsers];
+    users = [...newUsers];
 }
 
 export default users;
