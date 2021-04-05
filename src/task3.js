@@ -7,11 +7,11 @@ const fileToWrite = './csv/file.txt';
 const readStream = fs.createReadStream(csvFilePath);
 const writeStream = fs.createWriteStream(fileToWrite);
 
-readStream.on("error", (err) => {
-    console.log('file read error');
+readStream.on('error', (err) => {
+    console.log('file read error ', err);
 });
-writeStream.on("error", (err) => {
-    console.log('file write error');
+writeStream.on('error', (err) => {
+    console.log('file write error ', err);
 });
 
 csv({ checkType: true })
