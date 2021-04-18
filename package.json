@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "task1": "nodemon ./src/task1.js",
-    "task2": "nodemon ./src/task2.js",
-    "task3": "nodemon --exec babel-node ./src/task3.js",
+    "task1": "nodemon ./src/hw-1/task1.js",
+    "task2": "nodemon ./src/hw-1/task2.js",
+    "task3": "nodemon --exec babel-node ./src/hw-1/task3.js",
     "task2.1": "nodemon --exec babel-node ./src/hw-2/task.js",
     "lint": "eslint ./src --fix"
   },
