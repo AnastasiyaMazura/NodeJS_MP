@@ -1,4 +1,19 @@
+import Sequelize from 'sequelize';
 import User from '../models/User';
+
+export const getAutoSuggestUsers = (loginSubstr, limit) => {
+    const usersLimit = Number(limit);
+
+    return new Promise((resolve, reject) => {
+        User.findAll({ 
+            where: { login: { [Sequelize.Op.substring]: loginSubstr } },
+            order: [['login', 'ASC']],
+            limit: usersLimit 
+        })
+        .then((us) => resolve(us))
+        .catch(() => reject())
+    })
+}
 
 export const createUser = (data) => {
     const { age, login, password } = data;
@@ -39,20 +54,12 @@ export const updateUser = (data, params) => {
     })   
 }
 
-export const findAllUsers = (params) => {
-    if (!params) {
-        return new Promise((resolve, reject) => { 
-            User.findAll()
-                .then((us) => resolve(us))
-                .catch(() => reject())        
-        }) 
-    } else {
-        return new Promise((resolve, reject) => { 
-            User.findAll({ where: params })
-                .then((us) => resolve(us))
-                .catch(() => reject())      
-        }) 
-    }
+export const findUser = (params) => {
+    return new Promise((resolve, reject) => { 
+        User.findAll({ where: params })
+            .then((us) => resolve(us))
+            .catch(() => reject())      
+    }) 
 }
 
 export const deleteUser = (params) => {
