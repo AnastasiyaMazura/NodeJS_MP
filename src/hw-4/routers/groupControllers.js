@@ -8,49 +8,59 @@ const router = express.Router();
 const validator = createValidator();
 
 router.route('/')
-    .get((req, res) => findAllGroups()
+    .get((req, res, next) => findAllGroups()
         .then(groups => res.send(groups))
-        .catch(err => console.error(err))
+        .catch((err) => {
+            next(err);
+        })
     )
 
-    .post(validator.body(bodySchema), (req, res) => {
+    .post(validator.body(bodySchema), (req, res, next) => {
         createGroup(req.body)
             .then((gr) => res.send(gr))
-            .catch(err => console.error(err));
+            .catch((err) => {
+                next(err);
+            })
     });
 
 router.route('/:id')
-    .get((req, res) => {
+    .get((req, res, next) => {
         findAllGroups({ id: req.params.id })
             .then((group) => res.send(group))
-            .catch(() => res.send('Group was not found!'))
+            .catch((err) => {
+                next(err);
+            })
     })
-    .put(validator.body(bodySchema), (req, res) => {
+    .put(validator.body(bodySchema), (req, res, next) => {
         const { params, body } = req;
         updateGroup(body, { id: params.id })
             .then(() => res.send(`Group with ID = ${req.params.id} was updated.`))
-            .catch(() => res.send('Group was not updated!'))
+            .catch((err) => {
+                next(err);
+            })
     })
-    .delete((req, res) => {
+    .delete((req, res, next) => {
         deleteGroup({ id: req.params.id })
             .then(() => res.send(`Group with ID = ${req.params.id} was deleted.`))
-            .catch(() => res.send('Group was not deleted!'))
+            .catch(() => {
+                next(err);
+            })
     })
-    .post(validator.query(querySchema), validator.params(paramsSchema), (req, res) => {
+    .post(validator.query(querySchema), validator.params(paramsSchema), (req, res, next) => {
         const userIds = req.query.userId;
         const groupId = req.params.id;
 
         db.transaction().then((t) => {
             addUsersToGroup(groupId, userIds, { transaction: t })
                 .then(group => res.status(201).json({
-                    message: `The new users has been added to group #${groupId}`,
+                    message: `The new users were added to group #${groupId}`,
                     content: group
                 }))
                 .then(() => t.commit())
                 .catch((err) => {
-                    res.status(500).json({ message: err.message });
+                    next(err);
                     return t.rollback();
-                });
+                })
         });
     });
 

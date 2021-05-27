@@ -7,34 +7,44 @@ const router = express.Router();
 const validator = createValidator();
 
 router.route('/')
-    .get(validator.query(querySchema), (req, res) => {
+    .get(validator.query(querySchema), (req, res, next) => {
         const { loginSubstr, limit } = req.query;
         getAutoSuggestUsers(loginSubstr, limit)
             .then(users => res.send(users))
-            .catch(err => console.error(err))
+            .catch((err) => {
+                next(err);
+            });
     })
-    .post(validator.body(bodySchema), (req, res) => {
+    .post(validator.body(bodySchema), (req, res, next) => {
         createUser(req.body)
             .then((us) => res.send(us))
-            .catch(err => console.error(err));
+            .catch((err) => {
+                next(err);
+            });
     });
 
 router.route('/:id')
-    .get((req, res) => {
+    .get((req, res, next) => {
         findUser({ id: Number(req.params.id) })
             .then((user) => res.send(user))
-            .catch(() => res.send(`User with ID = ${req.params.id} was not found!`))
+            .catch((err) => {
+                next(err);
+            })
     })
-    .put(validator.body(bodySchema), (req, res) => {
+    .put(validator.body(bodySchema), (req, res, next) => {
         const { params, body } = req;
         updateUser(body, { id: Number(req.params.id) })
             .then(() => res.send(`User with ID = ${params.id} was updated.`))
-            .catch(() => res.send('User was not updated!'))
+            .catch((err) => {
+                next(err);
+            })
     })
-    .delete((req, res) => {
+    .delete((req, res, next) => {
         deleteUser({ id: Number(req.params.id) })
             .then(() => res.send(`User with ID = ${req.params.id} was deleted.`))
-            .catch(() => res.send('User was not deleted!'))
+            .catch((err) => {
+                next(err);
+            })
     });
 
 export default router;
