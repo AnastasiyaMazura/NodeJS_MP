@@ -29,6 +29,7 @@
             "templateStrings": true,
         }
     },
+    "ignorePatterns": ["__tests__", "__mocks__"],
     "rules": {
         "no-debugger": 1,
         // Possible errors

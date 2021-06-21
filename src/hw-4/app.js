@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import {} from 'dotenv/config';
 import sequelize from './data-access/db';
 import userRouter from './routers/userControllers';
 import groupRouter from './routers/groupControllers';
